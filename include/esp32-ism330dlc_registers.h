@@ -893,7 +893,7 @@ typedef struct {
     ism330dlc_MASTER_CONFIG_t uMASTER_CONFIG;
 } ISM330DLC_MasterConfig;
  
-extern struct 
+typedef struct esp32_ism330dlc_registers
 {
     ISM330DLC_Config sConfig;
     ISM330DLC_Status sStatus;
@@ -914,7 +914,6 @@ extern struct
     ISM330DLC_InterruptRouting sInterruptRouting;
     ISM330DLC_FunctionConfig sFunctionConfig;
     ISM330DLC_DeviceID sDeviceID;        
-}esp32_ism330dlc_registers;
-
+} esp32_ism330dlc_registers;
 
 #endif // ESP32_ISM330DLC_REGISTERS_H
