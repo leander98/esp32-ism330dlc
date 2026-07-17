@@ -713,5 +713,208 @@ typedef union { struct { uint8_t uData : 8; }; uint8_t byte; } ism330dlc_Y_OFS_U
 typedef union { struct { uint8_t uData : 8; }; uint8_t byte; } ism330dlc_Z_OFS_USR_t;
 
 
+/*Struct declarations*/
+typedef struct{
+    ism330dlc_FUNC_CFG_ACCESS_t uFUNC_CFG_ACCESS;
+    ism330dlc_SENSOR_SYNC_TIME_FRAME_t uSENSOR_SYNC_TIME_FRAME;
+    ism330dlc_SENSOR_SYNC_RES_RATIO_t uSENSOR_SYNC_RES_RATIO;
+    ism330dlc_FIFO_CTRL_1_t uFIFO_CTRL_1;
+    ism330dlc_FIFO_CTRL_2_t uFIFO_CTRL_2;
+    ism330dlc_FIFO_CTRL_3_t uFIFO_CTRL_3;
+    ism330dlc_FIFO_CTRL_4_t uFIFO_CTRL_4;
+    ism330dlc_FIFO_CTRL_5_t uFIFO_CTRL_5;
+    ism330dlc_DRDY_PULSE_CFG_t uDRDY_PULSE_CFG;
+    ism330dlc_INT1_CTRL_t uINT1_CTRL;
+    ism330dlc_INT2_CTRL_t uINT2_CTRL;
+    ism330dlc_WHO_AM_I_t uWHO_AM_I;
+    ism330dlc_CTRL1_XL_t uCTRL1_XL;
+    ism330dlc_CTRL2_G_t uCTRL2_G;
+    ism330dlc_CTRL3_C_t uCTRL3_C;
+    ism330dlc_CTRL4_C_t uCTRL4_C;
+    ism330dlc_CTRL5_C_t uCTRL5_C;
+    ism330dlc_CTRL6_C_t uCTRL6_C;
+    ism330dlc_CTRL7_G_t uCTRL7_G;
+    ism330dlc_CTRL8_XL_t uCTRL8_XL;
+    ism330dlc_CTRL9_XL_t uCTRL9_XL;
+    ism330dlc_CTRL10_C_t uCTRL10_C;
+} ISM330DLC_Config;
+
+typedef struct {
+    ism330dlc_MASTER_CONFIG_t uMASTER_CONFIG;
+    ism330dlc_WAKE_UP_SRC_t uWAKE_UP_SRC;
+    ism330dlc_TAP_SRC_t uTAP_SRC;
+    ism330dlc_D6D_SRC_t uD6D_SRC;
+    ism330dlc_STATUS_REG_t uSTATUS_REG;
+} ISM330DLC_Status;
+
+typedef struct {
+    ism330dlc_FIFO_STATUS1_t uFIFO_STATUS1;
+    ism330dlc_FIFO_STATUS2_t uFIFO_STATUS2;
+    ism330dlc_FIFO_STATUS3_t uFIFO_STATUS3;
+    ism330dlc_FIFO_STATUS4_t uFIFO_STATUS4;
+} ISM330DLC_FifoStatus;
+
+typedef struct {
+    ism330dlc_FUNC_SRC1_t uFUNC_SRC1;
+    ism330dlc_FUNC_SRC2_t uFUNC_SRC2;
+} ISM330DLC_FuncStatus;
+
+typedef struct {
+    ism330dlc_MD1_CFG_t uMD1_CFG;
+    ism330dlc_MD2_CFG_t uMD2_CFG;
+} ISM330DLC_InterruptConfig;
+
+typedef struct {
+    ism330dlc_CTRL1_OIS_t uCTRL1_OIS;
+    ism330dlc_CTRL2_OIS_t uCTRL2_OIS;
+    ism330dlc_CTRL3_OIS_t uCTRL3_OIS;
+} ISM330DLC_OisConfig;
+
+typedef struct {
+    ism330dlc_X_OFS_USR_t uX_OFS_USR;
+    ism330dlc_Y_OFS_USR_t uY_OFS_USR;
+    ism330dlc_Z_OFS_USR_t uZ_OFS_USR;
+} ISM330DLC_OffsetConfig;
+
+typedef struct {
+    ism330dlc_OUT_TEMP_L_t uOUT_TEMP_L;
+    ism330dlc_OUT_TEMP_H_t uOUT_TEMP_H;
+    ism330dlc_OUTX_L_G_t uOUTX_L_G;
+    ism330dlc_OUTX_H_G_t uOUTX_H_G;
+    ism330dlc_OUTY_L_G_t uOUTY_L_G;
+    ism330dlc_OUTY_H_G_t uOUTY_H_G;
+    ism330dlc_OUTZ_L_G_t uOUTZ_L_G;
+    ism330dlc_OUTZ_H_G_t uOUTZ_H_G;
+    ism330dlc_OUTX_L_XL_t uOUTX_L_XL;
+    ism330dlc_OUTX_H_XL_t uOUTX_H_XL;
+    ism330dlc_OUTY_L_XL_t uOUTY_L_XL;
+    ism330dlc_OUTY_H_XL_t uOUTY_H_XL;
+    ism330dlc_OUTZ_L_XL_t uOUTZ_L_XL;
+    ism330dlc_OUTZ_H_XL_t uOUTZ_H_XL;
+} ISM330DLC_Output;
+
+typedef struct {
+    ism330dlc_SENSORHUB1_REG_t uSENSORHUB1_REG;
+    ism330dlc_SENSORHUB2_REG_t uSENSORHUB2_REG;
+    ism330dlc_SENSORHUB3_REG_t uSENSORHUB3_REG;
+    ism330dlc_SENSORHUB4_REG_t uSENSORHUB4_REG;
+    ism330dlc_SENSORHUB5_REG_t uSENSORHUB5_REG;
+    ism330dlc_SENSORHUB6_REG_t uSENSORHUB6_REG;
+    ism330dlc_SENSORHUB7_REG_t uSENSORHUB7_REG;
+    ism330dlc_SENSORHUB8_REG_t uSENSORHUB8_REG;
+    ism330dlc_SENSORHUB9_REG_t uSENSORHUB9_REG;
+    ism330dlc_SENSORHUB10_REG_t uSENSORHUB10_REG;
+    ism330dlc_SENSORHUB11_REG_t uSENSORHUB11_REG;
+    ism330dlc_SENSORHUB12_REG_t uSENSORHUB12_REG;
+    ism330dlc_SENSORHUB13_REG_t uSENSORHUB13_REG;
+    ism330dlc_SENSORHUB14_REG_t uSENSORHUB14_REG;
+    ism330dlc_SENSORHUB15_REG_t uSENSORHUB15_REG;
+    ism330dlc_SENSORHUB16_REG_t uSENSORHUB16_REG;
+    ism330dlc_SENSORHUB17_REG_t uSENSORHUB17_REG;
+    ism330dlc_SENSORHUB18_REG_t uSENSORHUB18_REG;
+} ISM330DLC_SensorHub;
+
+typedef struct {
+    ism330dlc_TIMESTAMP0_REG_t uTIMESTAMP0_REG;
+    ism330dlc_TIMESTAMP1_REG_t uTIMESTAMP1_REG;
+    ism330dlc_TIMESTAMP2_REG_t uTIMESTAMP2_REG;
+} ISM330DLC_Timestamp;
+
+typedef struct {
+    ism330dlc_FIFO_DATA_OUT_L_t uFIFO_DATA_OUT_L;
+    ism330dlc_FIFO_DATA_OUT_H_t uFIFO_DATA_OUT_H;
+} ISM330DLC_FifoData;
+
+typedef struct {
+    ism330dlc_OUT_MAG_RAW_X_L_t uOUT_MAG_RAW_X_L;
+    ism330dlc_OUT_MAG_RAW_X_H_t uOUT_MAG_RAW_X_H;
+    ism330dlc_OUT_MAG_RAW_Y_L_t uOUT_MAG_RAW_Y_L;
+    ism330dlc_OUT_MAG_RAW_Y_H_t uOUT_MAG_RAW_Y_H;
+    ism330dlc_OUT_MAG_RAW_Z_L_t uOUT_MAG_RAW_Z_L;
+    ism330dlc_OUT_MAG_RAW_Z_H_t uOUT_MAG_RAW_Z_H;
+} ISM330DLC_Magnetometer;
+
+typedef struct {
+    ism330dlc_INT_OIS_t uINT_OIS;
+} ISM330DLC_OisStatus;
+
+typedef struct {
+    ism330dlc_MASTER_CMD_CODE_t uMASTER_CMD_CODE;
+    ism330dlc_SENS_SYNC_SPI_ERROR_CODE_t uSENS_SYNC_SPI_ERROR_CODE;
+} ISM330DLC_Master;
+
+typedef struct {
+    ism330dlc_TAP_CFG_t uTAP_CFG;
+    ism330dlc_TAP_THS_6D_t uTAP_THS_6D;
+    ism330dlc_INT_DUR2_t uINT_DUR2;
+    ism330dlc_WAKE_UP_THS_t uWAKE_UP_THS;
+    ism330dlc_WAKE_UP_DUR_t uWAKE_UP_DUR;
+    ism330dlc_FREE_FALL_t uFREE_FALL;
+} ISM330DLC_EventConfig; 
+
+typedef struct {
+    ism330dlc_FIFO_CTRL_1_t uFIFO_CTRL_1;
+    ism330dlc_FIFO_CTRL_2_t uFIFO_CTRL_2;
+    ism330dlc_FIFO_CTRL_3_t uFIFO_CTRL_3;
+    ism330dlc_FIFO_CTRL_4_t uFIFO_CTRL_4;
+    ism330dlc_FIFO_CTRL_5_t uFIFO_CTRL_5;
+} ISM330DLC_FifoConfig;
+
+typedef struct {
+    ism330dlc_DRDY_PULSE_CFG_t uDRDY_PULSE_CFG;
+    ism330dlc_INT1_CTRL_t uINT1_CTRL;
+    ism330dlc_INT2_CTRL_t uINT2_CTRL;
+} ISM330DLC_InterruptRouting;
+
+typedef struct {
+    ism330dlc_FUNC_CFG_ACCESS_t uFUNC_CFG_ACCESS;
+    ism330dlc_SENSOR_SYNC_TIME_FRAME_t uSENSOR_SYNC_TIME_FRAME;
+    ism330dlc_SENSOR_SYNC_RES_RATIO_t uSENSOR_SYNC_RES_RATIO;
+} ISM330DLC_FunctionConfig;
+
+typedef struct {
+    ism330dlc_WHO_AM_I_t uWHO_AM_I;
+} ISM330DLC_DeviceID;
+
+typedef struct {
+    ism330dlc_CTRL1_XL_t uCTRL1_XL;
+    ism330dlc_CTRL2_G_t uCTRL2_G;
+    ism330dlc_CTRL3_C_t uCTRL3_C;
+    ism330dlc_CTRL4_C_t uCTRL4_C;
+    ism330dlc_CTRL5_C_t uCTRL5_C;
+    ism330dlc_CTRL6_C_t uCTRL6_C;
+    ism330dlc_CTRL7_G_t uCTRL7_G;
+    ism330dlc_CTRL8_XL_t uCTRL8_XL;
+    ism330dlc_CTRL9_XL_t uCTRL9_XL;
+    ism330dlc_CTRL10_C_t uCTRL10_C;
+} ISM330DLC_Control;
+
+typedef struct {
+    ism330dlc_MASTER_CONFIG_t uMASTER_CONFIG;
+} ISM330DLC_MasterConfig;
+ 
+struct esp32_ism330dlc_registers
+{
+    ISM330DLC_Config config;
+    ISM330DLC_Status status;
+    ISM330DLC_FifoStatus fifoStatus;
+    ISM330DLC_FuncStatus funcStatus;
+    ISM330DLC_InterruptConfig interruptConfig;
+    ISM330DLC_OisConfig oisConfig;
+    ISM330DLC_OffsetConfig offsetConfig;
+    ISM330DLC_Output output;
+    ISM330DLC_SensorHub sensorHub;
+    ISM330DLC_Timestamp timestamp;
+    ISM330DLC_FifoData fifoData;
+    ISM330DLC_Magnetometer magnetometer;
+    ISM330DLC_OisStatus oisStatus;
+    ISM330DLC_Master master;
+    ISM330DLC_EventConfig eventConfig;
+    ISM330DLC_FifoConfig fifoConfig;
+    ISM330DLC_InterruptRouting interruptRouting;
+    ISM330DLC_FunctionConfig functionConfig;
+    ISM330DLC_DeviceID deviceID;        
+};
+
 
 #endif // ESP32_ISM330DLC_REGISTERS_H
