@@ -893,28 +893,28 @@ typedef struct {
     ism330dlc_MASTER_CONFIG_t uMASTER_CONFIG;
 } ISM330DLC_MasterConfig;
  
-struct esp32_ism330dlc_registers
+extern struct 
 {
-    ISM330DLC_Config config;
-    ISM330DLC_Status status;
-    ISM330DLC_FifoStatus fifoStatus;
-    ISM330DLC_FuncStatus funcStatus;
-    ISM330DLC_InterruptConfig interruptConfig;
-    ISM330DLC_OisConfig oisConfig;
-    ISM330DLC_OffsetConfig offsetConfig;
-    ISM330DLC_Output output;
-    ISM330DLC_SensorHub sensorHub;
-    ISM330DLC_Timestamp timestamp;
-    ISM330DLC_FifoData fifoData;
-    ISM330DLC_Magnetometer magnetometer;
-    ISM330DLC_OisStatus oisStatus;
-    ISM330DLC_Master master;
-    ISM330DLC_EventConfig eventConfig;
-    ISM330DLC_FifoConfig fifoConfig;
-    ISM330DLC_InterruptRouting interruptRouting;
-    ISM330DLC_FunctionConfig functionConfig;
-    ISM330DLC_DeviceID deviceID;        
-};
+    ISM330DLC_Config sConfig;
+    ISM330DLC_Status sStatus;
+    ISM330DLC_FifoStatus sFifoStatus;
+    ISM330DLC_FuncStatus sFuncStatus;
+    ISM330DLC_InterruptConfig sInterruptConfig;
+    ISM330DLC_OisConfig sOisConfig;
+    ISM330DLC_OffsetConfig sOffsetConfig;
+    ISM330DLC_Output sOutput;
+    ISM330DLC_SensorHub sSensorHub;
+    ISM330DLC_Timestamp sTimestamp;
+    ISM330DLC_FifoData sFifoData;
+    ISM330DLC_Magnetometer sMagnetometer;
+    ISM330DLC_OisStatus sOisStatus;
+    ISM330DLC_Master sMaster;
+    ISM330DLC_EventConfig sEventConfig;
+    ISM330DLC_FifoConfig sFifoConfig;
+    ISM330DLC_InterruptRouting sInterruptRouting;
+    ISM330DLC_FunctionConfig sFunctionConfig;
+    ISM330DLC_DeviceID sDeviceID;        
+}esp32_ism330dlc_registers;
 
 
 #endif // ESP32_ISM330DLC_REGISTERS_H
