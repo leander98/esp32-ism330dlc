@@ -10,6 +10,15 @@
 
 #define TAG "esp32-ism330dlc"
 
+/* Set to 1 at compile time to use vTaskDelay(), or 0 to use the ROM delay. */
+#ifndef ESP32_ISM330DLC_USE_FREERTOS_DELAY
+#ifdef CONFIG_ESP32_ISM330DLC_USE_FREERTOS_DELAY
+#define ESP32_ISM330DLC_USE_FREERTOS_DELAY 1
+#else
+#define ESP32_ISM330DLC_USE_FREERTOS_DELAY 0
+#endif
+#endif
+
 typedef esp_err_t (*esp32_ism330dlc_read_fn)(void *context, uint8_t reg,
                                              uint8_t *data, size_t length);
 typedef esp_err_t (*esp32_ism330dlc_write_fn)(void *context, uint8_t reg,

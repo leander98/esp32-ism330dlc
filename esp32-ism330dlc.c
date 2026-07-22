@@ -3,11 +3,27 @@
 
 #include <esp_err.h>
 #include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
 
 #include "esp32-ism330dlc.h"
 #include "esp32-ism330dlc_registers.h"
+
+#if ESP32_ISM330DLC_USE_FREERTOS_DELAY == 1
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#elif ESP32_ISM330DLC_USE_FREERTOS_DELAY == 0
+#include <esp_rom_sys.h>
+#else
+#error "ESP32_ISM330DLC_USE_FREERTOS_DELAY must be 0 or 1"
+#endif
+
+static void ism330dlc_delay_ms(uint32_t milliseconds)
+{
+#if ESP32_ISM330DLC_USE_FREERTOS_DELAY == 1
+    vTaskDelay(pdMS_TO_TICKS(milliseconds));
+#else
+    esp_rom_delay_us(milliseconds * 1000U);
+#endif
+}
 
 /*  @brief:     Zero-initialize the ISM330DLC registers
     @param      registers: Pointer to the registers structure
@@ -197,7 +213,7 @@ esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev)
         return err;
     }
     for (unsigned int attempt = 0; attempt < 20; ++attempt) {
-        vTaskDelay(pdMS_TO_TICKS(1));
+        ism330dlc_delay_ms(1);
         err = ism330dlc_read_register(dev, CTRL3_C, &value);
         if (err != ESP_OK) {
             return err;

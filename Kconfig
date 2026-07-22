@@ -1,0 +1,11 @@
+menu "ISM330DLC driver configuration"
+
+    config ESP32_ISM330DLC_USE_FREERTOS_DELAY
+        bool "Use FreeRTOS for ISM330DLC initialization delays"
+        default n
+        help
+            Use vTaskDelay() while waiting for the ISM330DLC software reset.
+            When disabled, the driver uses esp_rom_delay_us() instead and does
+            not directly depend on the FreeRTOS delay API.
+
+endmenu
