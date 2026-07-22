@@ -19,8 +19,27 @@
 #endif
 #endif
 
+/**
+ * @brief Read one or more consecutive ISM330DLC registers.
+ *
+ * @param context User-provided bus context.
+ * @param reg First register address to read.
+ * @param data Destination buffer.
+ * @param length Number of bytes to read.
+ * @return ESP_OK on success, otherwise an ESP-IDF error code.
+ */
 typedef esp_err_t (*esp32_ism330dlc_read_fn)(void *context, uint8_t reg,
                                              uint8_t *data, size_t length);
+
+/**
+ * @brief Write one or more consecutive ISM330DLC registers.
+ *
+ * @param context User-provided bus context.
+ * @param reg First register address to write.
+ * @param data Source buffer.
+ * @param length Number of bytes to write.
+ * @return ESP_OK on success, otherwise an ESP-IDF error code.
+ */
 typedef esp_err_t (*esp32_ism330dlc_write_fn)(void *context, uint8_t reg,
                                               const uint8_t *data, size_t length);
 
@@ -128,7 +147,31 @@ typedef struct esp32_ism330dlc {
       .accel_full_scale = ISM330DLC_ACCEL_FS_4G, \
       .gyro_full_scale = ISM330DLC_GYRO_FS_2000_DPS }
 
+/**
+ * @brief Initialize and configure the ISM330DLC accelerometer and gyroscope.
+ *
+ * Verifies the device identity, performs a software reset, enables block data
+ * update and register auto-increment, and applies the configured output data
+ * rates and full-scale ranges.
+ *
+ * @param dev Device instance with transport callbacks and settings populated.
+ * @return ESP_OK on success, ESP_ERR_NOT_FOUND for an unexpected device ID,
+ *         ESP_ERR_TIMEOUT if reset does not complete, or another ESP-IDF error.
+ */
 esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev);
+
+/**
+ * @brief Configure the electrical behavior and event routing of INT1 and INT2.
+ *
+ * Shared control registers are updated without changing unrelated settings.
+ * Event generators such as tap, wake-up, and free-fall must be configured
+ * separately before their routed interrupts can occur.
+ *
+ * @param dev Initialized device instance.
+ * @param config Interrupt pin and routing configuration.
+ * @return ESP_OK on success, ESP_ERR_INVALID_ARG for invalid arguments, or a
+ *         transport error returned by the read/write callbacks.
+ */
 esp_err_t esp32_ism330dlc_configure_interrupts(
     esp32_ism330dlc_t *dev,
     const esp32_ism330dlc_interrupt_config_t *config);

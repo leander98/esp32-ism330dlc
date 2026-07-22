@@ -16,6 +16,11 @@
 #error "ESP32_ISM330DLC_USE_FREERTOS_DELAY must be 0 or 1"
 #endif
 
+/**
+ * @brief Delay execution using the delay backend selected at compile time.
+ *
+ * @param milliseconds Delay duration in milliseconds.
+ */
 static void ism330dlc_delay_ms(uint32_t milliseconds)
 {
 #if ESP32_ISM330DLC_USE_FREERTOS_DELAY == 1
@@ -25,10 +30,12 @@ static void ism330dlc_delay_ms(uint32_t milliseconds)
 #endif
 }
 
-/*  @brief:     Zero-initialize the ISM330DLC registers
-    @param      registers: Pointer to the registers structure
-    @return:    ESP_OK if successful, otherwise an error code
-*/
+/**
+ * @brief Zero-initialize the local ISM330DLC register shadow.
+ *
+ * @param registers Register shadow to initialize.
+ * @return ESP_OK on success or ESP_ERR_INVALID_ARG for a NULL pointer.
+ */
 static esp_err_t esp32_ism330dlc_registers_zero_init(esp32_ism330dlc_registers *registers)
 {
     if (registers == NULL) {
@@ -40,6 +47,14 @@ static esp_err_t esp32_ism330dlc_registers_zero_init(esp32_ism330dlc_registers *
     return ESP_OK;
 }
 
+/**
+ * @brief Read a single device register through the configured transport.
+ *
+ * @param dev Device instance.
+ * @param reg Register address.
+ * @param value Destination for the register value.
+ * @return ESP_OK on success, otherwise the transport error.
+ */
 static esp_err_t ism330dlc_read_register(esp32_ism330dlc_t *dev, uint8_t reg,
                                         uint8_t *value)
 {
@@ -50,6 +65,14 @@ static esp_err_t ism330dlc_read_register(esp32_ism330dlc_t *dev, uint8_t reg,
     return err;
 }
 
+/**
+ * @brief Write a single device register through the configured transport.
+ *
+ * @param dev Device instance.
+ * @param reg Register address.
+ * @param value Register value to write.
+ * @return ESP_OK on success, otherwise the transport error.
+ */
 static esp_err_t ism330dlc_write_register(esp32_ism330dlc_t *dev, uint8_t reg,
                                          uint8_t value)
 {
@@ -60,6 +83,13 @@ static esp_err_t ism330dlc_write_register(esp32_ism330dlc_t *dev, uint8_t reg,
     return err;
 }
 
+/**
+ * @brief Apply interrupt pin electrical settings and source routing.
+ *
+ * @param dev Device instance.
+ * @param config Interrupt configuration to apply.
+ * @return ESP_OK on success, otherwise an argument or transport error.
+ */
 esp_err_t esp32_ism330dlc_configure_interrupts(
     esp32_ism330dlc_t *dev,
     const esp32_ism330dlc_interrupt_config_t *config)
@@ -166,10 +196,13 @@ esp_err_t esp32_ism330dlc_configure_interrupts(
     return ESP_OK;
 }
 
-/*  @brief:     Initialize the ISM330DLC sensor 
-    @param      dev: Pointer to the ISM330DLC device structure
-    @return:    ESP_OK if successful, otherwise an error code
-*/
+/**
+ * @brief Initialize the ISM330DLC sensor.
+ *
+ * @param dev Device instance with transport callbacks and settings populated.
+ * @return ESP_OK on success, otherwise an argument, transport, identity, or
+ *         reset-timeout error.
+ */
 esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev)
 {
     esp32_ism330dlc_registers registers;
