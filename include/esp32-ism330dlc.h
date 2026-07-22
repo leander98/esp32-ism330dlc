@@ -130,6 +130,30 @@ typedef struct {
     esp32_ism330dlc_int2_route_t int2;
 } esp32_ism330dlc_interrupt_config_t;
 
+typedef struct {
+    int16_t x;
+    int16_t y;
+    int16_t z;
+} esp32_ism330dlc_raw_vector_t;
+
+typedef struct {
+    esp32_ism330dlc_raw_vector_t acceleration;
+    esp32_ism330dlc_raw_vector_t angular_rate;
+    int16_t temperature;
+} esp32_ism330dlc_raw_sample_t;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+} esp32_ism330dlc_vector_t;
+
+typedef struct {
+    esp32_ism330dlc_vector_t acceleration_g;
+    esp32_ism330dlc_vector_t angular_rate_dps;
+    float temperature_c;
+} esp32_ism330dlc_sample_t;
+
 typedef struct esp32_ism330dlc {
     esp32_ism330dlc_registers registers;    /*Register instance of device*/
     esp32_ism330dlc_read_fn read;
@@ -175,5 +199,33 @@ esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev);
 esp_err_t esp32_ism330dlc_configure_interrupts(
     esp32_ism330dlc_t *dev,
     const esp32_ism330dlc_interrupt_config_t *config);
+
+/**
+ * @brief Read one raw temperature, gyroscope, and accelerometer sample.
+ *
+ * The output registers are read in a single transaction. Register
+ * auto-increment must be enabled, as it is by esp32_ism330dlc_init().
+ *
+ * @param dev Initialized device instance.
+ * @param sample Destination for the signed raw sensor values.
+ * @return ESP_OK on success, ESP_ERR_INVALID_ARG for invalid arguments, or a
+ *         transport error returned by the read callback.
+ */
+esp_err_t esp32_ism330dlc_read_raw(esp32_ism330dlc_t *dev,
+                                  esp32_ism330dlc_raw_sample_t *sample);
+
+/**
+ * @brief Read and convert one temperature, gyroscope, and accelerometer sample.
+ *
+ * Acceleration is returned in g, angular rate in degrees per second, and
+ * temperature in degrees Celsius.
+ *
+ * @param dev Initialized device instance.
+ * @param sample Destination for the converted sensor values.
+ * @return ESP_OK on success, ESP_ERR_INVALID_ARG for invalid arguments, or a
+ *         transport error returned by the read callback.
+ */
+esp_err_t esp32_ism330dlc_read(esp32_ism330dlc_t *dev,
+                              esp32_ism330dlc_sample_t *sample);
 
 #endif // ESP32_ISM330DLC_H

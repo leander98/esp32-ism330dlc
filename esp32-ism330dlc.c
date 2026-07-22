@@ -83,6 +83,102 @@ static esp_err_t ism330dlc_write_register(esp32_ism330dlc_t *dev, uint8_t reg,
     return err;
 }
 
+static int16_t ism330dlc_decode_int16(const uint8_t *data)
+{
+    return (int16_t)((uint16_t)data[0] | ((uint16_t)data[1] << 8));
+}
+
+/**
+ * @brief Read the complete temperature, gyroscope, and accelerometer output.
+ *
+ * @param dev Device instance.
+ * @param sample Destination for decoded raw values.
+ * @return ESP_OK on success, otherwise an argument or transport error.
+ */
+esp_err_t esp32_ism330dlc_read_raw(esp32_ism330dlc_t *dev,
+                                  esp32_ism330dlc_raw_sample_t *sample)
+{
+    uint8_t data[14];
+    esp_err_t err;
+
+    if (dev == NULL || sample == NULL || dev->read == NULL) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    err = dev->read(dev->context, OUT_TEMP_L, data, sizeof(data));
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to read IMU output registers: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    sample->temperature = ism330dlc_decode_int16(&data[0]);
+    sample->angular_rate.x = ism330dlc_decode_int16(&data[2]);
+    sample->angular_rate.y = ism330dlc_decode_int16(&data[4]);
+    sample->angular_rate.z = ism330dlc_decode_int16(&data[6]);
+    sample->acceleration.x = ism330dlc_decode_int16(&data[8]);
+    sample->acceleration.y = ism330dlc_decode_int16(&data[10]);
+    sample->acceleration.z = ism330dlc_decode_int16(&data[12]);
+
+    dev->registers.sOutput.uOUT_TEMP_L.byte = data[0];
+    dev->registers.sOutput.uOUT_TEMP_H.byte = data[1];
+    dev->registers.sOutput.uOUTX_L_G.byte = data[2];
+    dev->registers.sOutput.uOUTX_H_G.byte = data[3];
+    dev->registers.sOutput.uOUTY_L_G.byte = data[4];
+    dev->registers.sOutput.uOUTY_H_G.byte = data[5];
+    dev->registers.sOutput.uOUTZ_L_G.byte = data[6];
+    dev->registers.sOutput.uOUTZ_H_G.byte = data[7];
+    dev->registers.sOutput.uOUTX_L_XL.byte = data[8];
+    dev->registers.sOutput.uOUTX_H_XL.byte = data[9];
+    dev->registers.sOutput.uOUTY_L_XL.byte = data[10];
+    dev->registers.sOutput.uOUTY_H_XL.byte = data[11];
+    dev->registers.sOutput.uOUTZ_L_XL.byte = data[12];
+    dev->registers.sOutput.uOUTZ_H_XL.byte = data[13];
+
+    return ESP_OK;
+}
+
+/**
+ * @brief Read sensor output and convert it to engineering units.
+ *
+ * @param dev Device instance.
+ * @param sample Destination for converted values.
+ * @return ESP_OK on success, otherwise an argument or transport error.
+ */
+esp_err_t esp32_ism330dlc_read(esp32_ism330dlc_t *dev,
+                              esp32_ism330dlc_sample_t *sample)
+{
+    static const float accel_mg_per_lsb[] = { 0.061f, 0.488f, 0.122f, 0.244f };
+    static const float gyro_mdps_per_lsb[] = { 8.75f, 17.50f, 35.0f, 70.0f };
+    esp32_ism330dlc_raw_sample_t raw;
+    esp_err_t err;
+    float accel_scale;
+    float gyro_scale;
+
+    if (dev == NULL || sample == NULL ||
+        dev->accel_full_scale > ISM330DLC_ACCEL_FS_8G ||
+        dev->gyro_full_scale > ISM330DLC_GYRO_FS_2000_DPS) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    err = esp32_ism330dlc_read_raw(dev, &raw);
+    if (err != ESP_OK) {
+        return err;
+    }
+
+    accel_scale = accel_mg_per_lsb[dev->accel_full_scale] / 1000.0f;
+    gyro_scale = gyro_mdps_per_lsb[dev->gyro_full_scale] / 1000.0f;
+
+    sample->acceleration_g.x = raw.acceleration.x * accel_scale;
+    sample->acceleration_g.y = raw.acceleration.y * accel_scale;
+    sample->acceleration_g.z = raw.acceleration.z * accel_scale;
+    sample->angular_rate_dps.x = raw.angular_rate.x * gyro_scale;
+    sample->angular_rate_dps.y = raw.angular_rate.y * gyro_scale;
+    sample->angular_rate_dps.z = raw.angular_rate.z * gyro_scale;
+    sample->temperature_c = 25.0f + ((float)raw.temperature / 16.0f);
+
+    return ESP_OK;
+}
+
 /**
  * @brief Apply interrupt pin electrical settings and source routing.
  *
