@@ -2,6 +2,7 @@
 #define ESP32_ISM330DLC_H
 
 #include <esp_err.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -42,6 +43,65 @@ typedef enum {
     ISM330DLC_GYRO_FS_2000_DPS = 0x3,
 } esp32_ism330dlc_gyro_fs_t;
 
+typedef enum {
+    ISM330DLC_INTERRUPT_ACTIVE_HIGH = 0,
+    ISM330DLC_INTERRUPT_ACTIVE_LOW,
+} esp32_ism330dlc_interrupt_polarity_t;
+
+typedef enum {
+    ISM330DLC_INTERRUPT_PUSH_PULL = 0,
+    ISM330DLC_INTERRUPT_OPEN_DRAIN,
+} esp32_ism330dlc_interrupt_output_t;
+
+typedef enum {
+    ISM330DLC_DATA_READY_LATCHED = 0,
+    ISM330DLC_DATA_READY_PULSED,
+} esp32_ism330dlc_data_ready_mode_t;
+
+typedef struct {
+    bool accelerometer_data_ready;
+    bool gyroscope_data_ready;
+    bool boot_complete;
+    bool fifo_threshold;
+    bool fifo_overrun;
+    bool fifo_full;
+    bool timer;
+    bool tilt;
+    bool orientation_6d;
+    bool double_tap;
+    bool free_fall;
+    bool wake_up;
+    bool single_tap;
+    bool inactivity;
+} esp32_ism330dlc_int1_route_t;
+
+typedef struct {
+    bool accelerometer_data_ready;
+    bool gyroscope_data_ready;
+    bool temperature_data_ready;
+    bool fifo_threshold;
+    bool fifo_overrun;
+    bool fifo_full;
+    bool iron_correction;
+    bool tilt;
+    bool orientation_6d;
+    bool double_tap;
+    bool free_fall;
+    bool wake_up;
+    bool single_tap;
+    bool inactivity;
+} esp32_ism330dlc_int2_route_t;
+
+typedef struct {
+    esp32_ism330dlc_interrupt_polarity_t polarity;
+    esp32_ism330dlc_interrupt_output_t output_type;
+    esp32_ism330dlc_data_ready_mode_t data_ready_mode;
+    bool mask_data_ready_until_filters_settle;
+    bool route_int2_signals_to_int1;
+    esp32_ism330dlc_int1_route_t int1;
+    esp32_ism330dlc_int2_route_t int2;
+} esp32_ism330dlc_interrupt_config_t;
+
 typedef struct esp32_ism330dlc {
     esp32_ism330dlc_registers registers;    /*Register instance of device*/
     esp32_ism330dlc_read_fn read;
@@ -60,5 +120,8 @@ typedef struct esp32_ism330dlc {
       .gyro_full_scale = ISM330DLC_GYRO_FS_2000_DPS }
 
 esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev);
+esp_err_t esp32_ism330dlc_configure_interrupts(
+    esp32_ism330dlc_t *dev,
+    const esp32_ism330dlc_interrupt_config_t *config);
 
 #endif // ESP32_ISM330DLC_H
