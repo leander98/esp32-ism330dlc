@@ -22,6 +22,7 @@
 #define INT2_CTRL                       0x0E    /*R/W - Interrupt signal control register 2*/
 
 #define WHO_AM_I                        0x0F    /*R/W - WHO_AM_I identifier register*/
+#define ISM330DLC_WHO_AM_I_VALUE        0x6A
 
 #define CTRL1_XL                        0x10    /*R/W - Control register 1 - Accelerometer*/
 #define CTRL2_G                         0x11    /*R/W - Control register 2 - Gyroscope*/
