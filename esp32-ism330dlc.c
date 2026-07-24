@@ -3,9 +3,14 @@
 
 #include <esp_err.h>
 #include <esp_log.h>
+#include <driver/i2c_master.h>
+#include <driver/spi_master.h>
 
 #include "esp32-ism330dlc.h"
 #include "esp32-ism330dlc_registers.h"
+
+#define ISM330DLC_SPI_READ_BIT     0x80U
+#define ISM330DLC_SPI_ADDRESS_MASK 0x7FU
 
 #if ESP32_ISM330DLC_USE_FREERTOS_DELAY == 1
 #include <freertos/FreeRTOS.h>
@@ -28,6 +33,123 @@ static void ism330dlc_delay_ms(uint32_t milliseconds)
 #else
     esp_rom_delay_us(milliseconds * 1000U);
 #endif
+}
+
+/**
+ * @brief Read ISM330DLC registers using an ESP-IDF I2C device handle.
+ *
+ * @param context Initialized i2c_master_dev_handle_t cast to void *.
+ * @param reg First register address to read.
+ * @param data Destination buffer.
+ * @param length Number of consecutive bytes to read.
+ * @return ESP_OK on success, otherwise an ESP-IDF I2C error.
+ */
+esp_err_t esp32_ism330dlc_i2c_read(void *context, uint8_t reg,
+                                   uint8_t *data, size_t length)
+{
+    i2c_master_dev_handle_t device = (i2c_master_dev_handle_t)context;
+
+    if (device == NULL || data == NULL || length == 0) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    return i2c_master_transmit_receive(device, &reg, sizeof(reg), data, length,
+                                       -1);
+}
+
+/**
+ * @brief Read ISM330DLC registers using an ESP-IDF SPI device handle.
+ *
+ * The first received byte overlaps the transmitted register address and is
+ * discarded. The remaining bytes contain the requested register values.
+ *
+ * @param context Initialized spi_device_handle_t cast to void *.
+ * @param reg First register address to read.
+ * @param data Destination buffer.
+ * @param length Number of consecutive bytes to read.
+ * @return ESP_OK on success, otherwise an ESP-IDF SPI error.
+ */
+esp_err_t esp32_ism330dlc_spi_read(void *context, uint8_t reg,
+                                   uint8_t *data, size_t length)
+{
+    spi_device_handle_t device = (spi_device_handle_t)context;
+
+    if (device == NULL || data == NULL || length == 0) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    uint8_t tx_buffer[length + 1];
+    uint8_t rx_buffer[length + 1];
+    memset(tx_buffer, 0, sizeof(tx_buffer));
+    tx_buffer[0] = (reg & ISM330DLC_SPI_ADDRESS_MASK) |
+                   ISM330DLC_SPI_READ_BIT;
+
+    spi_transaction_t transaction = {
+        .length = sizeof(tx_buffer) * 8U,
+        .tx_buffer = tx_buffer,
+        .rx_buffer = rx_buffer,
+    };
+
+    esp_err_t err = spi_device_transmit(device, &transaction);
+    if (err == ESP_OK) {
+        memcpy(data, &rx_buffer[1], length);
+    }
+    return err;
+}
+
+/**
+ * @brief Write ISM330DLC registers using an ESP-IDF I2C device handle.
+ *
+ * @param context Initialized i2c_master_dev_handle_t cast to void *.
+ * @param reg First register address to write.
+ * @param data Source buffer.
+ * @param length Number of consecutive bytes to write.
+ * @return ESP_OK on success, otherwise an ESP-IDF I2C error.
+ */
+esp_err_t esp32_ism330dlc_i2c_write(void *context, uint8_t reg,
+                                    const uint8_t *data, size_t length)
+{
+    i2c_master_dev_handle_t device = (i2c_master_dev_handle_t)context;
+
+    if (device == NULL || data == NULL || length == 0) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    uint8_t transaction[length + 1];
+    transaction[0] = reg;
+    memcpy(&transaction[1], data, length);
+
+    return i2c_master_transmit(device, transaction, sizeof(transaction), -1);
+}
+
+/**
+ * @brief Write ISM330DLC registers using an ESP-IDF SPI device handle.
+ *
+ * @param context Initialized spi_device_handle_t cast to void *.
+ * @param reg First register address to write.
+ * @param data Source buffer.
+ * @param length Number of consecutive bytes to write.
+ * @return ESP_OK on success, otherwise an ESP-IDF SPI error.
+ */
+esp_err_t esp32_ism330dlc_spi_write(void *context, uint8_t reg,
+                                    const uint8_t *data, size_t length)
+{
+    spi_device_handle_t device = (spi_device_handle_t)context;
+
+    if (device == NULL || data == NULL || length == 0) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    uint8_t tx_buffer[length + 1];
+    tx_buffer[0] = reg & ISM330DLC_SPI_ADDRESS_MASK;
+    memcpy(&tx_buffer[1], data, length);
+
+    spi_transaction_t transaction = {
+        .length = sizeof(tx_buffer) * 8U,
+        .tx_buffer = tx_buffer,
+    };
+
+    return spi_device_transmit(device, &transaction);
 }
 
 /**

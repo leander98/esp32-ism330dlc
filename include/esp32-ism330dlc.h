@@ -43,6 +43,54 @@ typedef esp_err_t (*esp32_ism330dlc_read_fn)(void *context, uint8_t reg,
 typedef esp_err_t (*esp32_ism330dlc_write_fn)(void *context, uint8_t reg,
                                               const uint8_t *data, size_t length);
 
+/**
+ * @brief Read ISM330DLC registers using an ESP-IDF I2C device handle.
+ *
+ * @param context Initialized i2c_master_dev_handle_t cast to void *.
+ * @param reg First register address to read.
+ * @param data Destination buffer.
+ * @param length Number of consecutive bytes to read.
+ * @return ESP_OK on success, otherwise an ESP-IDF I2C error.
+ */
+esp_err_t esp32_ism330dlc_i2c_read(void *context, uint8_t reg,
+                                   uint8_t *data, size_t length);
+
+/**
+ * @brief Read ISM330DLC registers using an ESP-IDF SPI device handle.
+ *
+ * @param context Initialized spi_device_handle_t cast to void *.
+ * @param reg First register address to read.
+ * @param data Destination buffer.
+ * @param length Number of consecutive bytes to read.
+ * @return ESP_OK on success, otherwise an ESP-IDF SPI error.
+ */
+esp_err_t esp32_ism330dlc_spi_read(void *context, uint8_t reg,
+                                   uint8_t *data, size_t length);
+
+/**
+ * @brief Write ISM330DLC registers using an ESP-IDF I2C device handle.
+ *
+ * @param context Initialized i2c_master_dev_handle_t cast to void *.
+ * @param reg First register address to write.
+ * @param data Source buffer.
+ * @param length Number of consecutive bytes to write.
+ * @return ESP_OK on success, otherwise an ESP-IDF I2C error.
+ */
+esp_err_t esp32_ism330dlc_i2c_write(void *context, uint8_t reg,
+                                    const uint8_t *data, size_t length);
+
+/**
+ * @brief Write ISM330DLC registers using an ESP-IDF SPI device handle.
+ *
+ * @param context Initialized spi_device_handle_t cast to void *.
+ * @param reg First register address to write.
+ * @param data Source buffer.
+ * @param length Number of consecutive bytes to write.
+ * @return ESP_OK on success, otherwise an ESP-IDF SPI error.
+ */
+esp_err_t esp32_ism330dlc_spi_write(void *context, uint8_t reg,
+                                    const uint8_t *data, size_t length);
+
 typedef enum {
     ISM330DLC_ODR_POWER_DOWN = 0x0,
     ISM330DLC_ODR_12_5_HZ = 0x1,
