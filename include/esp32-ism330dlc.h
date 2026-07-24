@@ -228,4 +228,36 @@ esp_err_t esp32_ism330dlc_read_raw(esp32_ism330dlc_t *dev,
 esp_err_t esp32_ism330dlc_read(esp32_ism330dlc_t *dev,
                               esp32_ism330dlc_sample_t *sample);
 
+/**
+ * @brief Read only the accelerometer output in a single six-byte transaction.
+ *
+ * This avoids reading gyroscope and temperature registers when only linear
+ * acceleration is needed. Values are converted using the configured
+ * accelerometer full-scale range and returned in g.
+ *
+ * @param dev Initialized device instance.
+ * @param acceleration_g Destination for the acceleration vector in g.
+ * @return ESP_OK on success, ESP_ERR_INVALID_ARG for invalid arguments, or a
+ *         transport error returned by the read callback.
+ */
+esp_err_t esp32_ism330dlc_read_acceleration(
+    esp32_ism330dlc_t *dev,
+    esp32_ism330dlc_vector_t *acceleration_g);
+
+/**
+ * @brief Read only the gyroscope output in a single six-byte transaction.
+ *
+ * This avoids reading accelerometer and temperature registers when only
+ * angular rate is needed. Values are converted using the configured gyroscope
+ * full-scale range and returned in degrees per second.
+ *
+ * @param dev Initialized device instance.
+ * @param angular_rate_dps Destination for the angular-rate vector in dps.
+ * @return ESP_OK on success, ESP_ERR_INVALID_ARG for invalid arguments, or a
+ *         transport error returned by the read callback.
+ */
+esp_err_t esp32_ism330dlc_read_angular_rate(
+    esp32_ism330dlc_t *dev,
+    esp32_ism330dlc_vector_t *angular_rate_dps);
+
 #endif // ESP32_ISM330DLC_H

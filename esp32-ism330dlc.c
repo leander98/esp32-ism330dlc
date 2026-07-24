@@ -89,6 +89,94 @@ static int16_t ism330dlc_decode_int16(const uint8_t *data)
 }
 
 /**
+ * @brief Read and convert only the accelerometer output registers.
+ *
+ * @param dev Device instance.
+ * @param acceleration_g Destination vector in g.
+ * @return ESP_OK on success, otherwise an argument or transport error.
+ */
+esp_err_t esp32_ism330dlc_read_acceleration(
+    esp32_ism330dlc_t *dev,
+    esp32_ism330dlc_vector_t *acceleration_g)
+{
+    static const float scale_g_per_lsb[] = {
+        0.000061f, 0.000488f, 0.000122f, 0.000244f
+    };
+    uint8_t data[6];
+    float scale;
+    esp_err_t err;
+
+    if (dev == NULL || acceleration_g == NULL || dev->read == NULL ||
+        dev->accel_full_scale > ISM330DLC_ACCEL_FS_8G) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    err = dev->read(dev->context, OUTX_L_XL, data, sizeof(data));
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to read accelerometer output: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    scale = scale_g_per_lsb[dev->accel_full_scale];
+    acceleration_g->x = ism330dlc_decode_int16(&data[0]) * scale;
+    acceleration_g->y = ism330dlc_decode_int16(&data[2]) * scale;
+    acceleration_g->z = ism330dlc_decode_int16(&data[4]) * scale;
+
+    dev->registers.sOutput.uOUTX_L_XL.byte = data[0];
+    dev->registers.sOutput.uOUTX_H_XL.byte = data[1];
+    dev->registers.sOutput.uOUTY_L_XL.byte = data[2];
+    dev->registers.sOutput.uOUTY_H_XL.byte = data[3];
+    dev->registers.sOutput.uOUTZ_L_XL.byte = data[4];
+    dev->registers.sOutput.uOUTZ_H_XL.byte = data[5];
+
+    return ESP_OK;
+}
+
+/**
+ * @brief Read and convert only the gyroscope output registers.
+ *
+ * @param dev Device instance.
+ * @param angular_rate_dps Destination vector in degrees per second.
+ * @return ESP_OK on success, otherwise an argument or transport error.
+ */
+esp_err_t esp32_ism330dlc_read_angular_rate(
+    esp32_ism330dlc_t *dev,
+    esp32_ism330dlc_vector_t *angular_rate_dps)
+{
+    static const float scale_dps_per_lsb[] = {
+        0.00875f, 0.01750f, 0.035f, 0.070f
+    };
+    uint8_t data[6];
+    float scale;
+    esp_err_t err;
+
+    if (dev == NULL || angular_rate_dps == NULL || dev->read == NULL ||
+        dev->gyro_full_scale > ISM330DLC_GYRO_FS_2000_DPS) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    err = dev->read(dev->context, OUTX_L_G, data, sizeof(data));
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to read gyroscope output: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    scale = scale_dps_per_lsb[dev->gyro_full_scale];
+    angular_rate_dps->x = ism330dlc_decode_int16(&data[0]) * scale;
+    angular_rate_dps->y = ism330dlc_decode_int16(&data[2]) * scale;
+    angular_rate_dps->z = ism330dlc_decode_int16(&data[4]) * scale;
+
+    dev->registers.sOutput.uOUTX_L_G.byte = data[0];
+    dev->registers.sOutput.uOUTX_H_G.byte = data[1];
+    dev->registers.sOutput.uOUTY_L_G.byte = data[2];
+    dev->registers.sOutput.uOUTY_H_G.byte = data[3];
+    dev->registers.sOutput.uOUTZ_L_G.byte = data[4];
+    dev->registers.sOutput.uOUTZ_H_G.byte = data[5];
+
+    return ESP_OK;
+}
+
+/**
  * @brief Read the complete temperature, gyroscope, and accelerometer output.
  *
  * @param dev Device instance.
