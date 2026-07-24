@@ -541,9 +541,8 @@ esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev)
     }
     dev->registers.sDeviceID.uWHO_AM_I.byte = value;
     if (value != ISM330DLC_WHO_AM_I_VALUE) {
-        ESP_LOGE(TAG, "Unexpected WHO_AM_I value 0x%02x (expected 0x%02x)",
+        ESP_LOGW(TAG, "Unexpected WHO_AM_I value 0x%02x (expected 0x%02x)",
                  value, ISM330DLC_WHO_AM_I_VALUE);
-        return ESP_ERR_NOT_FOUND;
     }
 
     /* Reset first, then wait for SW_RESET to clear. */
