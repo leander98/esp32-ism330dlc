@@ -543,6 +543,8 @@ esp_err_t esp32_ism330dlc_init(esp32_ism330dlc_t *dev)
     if (value != ISM330DLC_WHO_AM_I_VALUE) {
         ESP_LOGW(TAG, "Unexpected WHO_AM_I value 0x%02x (expected 0x%02x)",
                  value, ISM330DLC_WHO_AM_I_VALUE);
+        //return ESP_ERR_NOT_FOUND;
+        //Do not return if address mismatch, as the sensor may still be functional. Log a warning instead.
     }
 
     /* Reset first, then wait for SW_RESET to clear. */
